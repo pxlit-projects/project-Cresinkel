@@ -1,0 +1,17 @@
+<div>
+  <h2>Login</h2>
+  <form (ngSubmit)="login()">
+    <div>
+      <label for="username">Username</label>
+      <input id="username" [(ngModel)]="username" name="username" required />
+    </div>
+    <div>
+      <label for="role">Role</label>
+      <select [(ngModel)]="role" name="role">
+        <option value="redacteur">Redacteur</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <button type="submit">Login</button>
+  </form>
+</div>

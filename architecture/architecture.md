@@ -1,5 +1,7 @@
 # Architecture
 
+![Project Architecture](./architecture.png)
+
 # Frontend
 * Angular Frontend: De gebruikersinterface, ontwikkeld met Angular, stelt gebruikers in staat om met het systeem te communiceren.
 
@@ -36,5 +38,3 @@
 
 * Configuratiebeheer
  * ConfigService slaat en beheert de configuraties voor elke microservice centraal. Deze aanpak vereenvoudigt het updaten van configuraties en zorgt voor consistentie door het hele systeem.
-
-![Project Architecture](./architecture.png)

@@ -12,13 +12,11 @@
 
 * OpenFeign, een declaratieve REST-client.
  
-* ReviewService: Verantwoordelijk voor het beheer van reviews die aan berichten gekoppeld zijn. Het werkt samen met PostService en CommentService om gerelateerde gegevens op te halen, met behulp van OpenFeign voor communicatie tussen de services.
+* ReviewService: Verantwoordelijk voor het beheer van reviews die aan berichten gekoppeld zijn. Dit zal ook de redacteur meldingen sturen. Het werkt samen met PostService en CommentService om gerelateerde gegevens op te halen, met behulp van OpenFeign voor communicatie tussen de services.
  
 * CommentService: Beheert reacties op berichten en reviews. Deze service haalt relevante informatie op van PostService en ReviewService om reacties te verwerken.
  
 * Message Bus / RabbitMQ: Behandelt asynchrone communicatie tussen services via berichtwachtrijen. Bijvoorbeeld, wanneer gebeurtenissen in de PostService plaatsvinden, kunnen berichten naar de NotificationService worden gestuurd om gebruikers te informeren.
- 
-* NotificationService: Verantwoordelijk voor het versturen van meldingen naar gebruikers op basis van gebeurtenissen van andere services. Het luistert naar berichten van RabbitMQ om meldingen te verwerken.
  
 * ConfigService: Beheert de configuratie-instellingen van het systeem en biedt een gecentraliseerde configuratie voor alle services.
  

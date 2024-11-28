@@ -1,4 +1,4 @@
-div {
+div:not(.button-group) {
   max-width: 400px;
   margin: 2rem auto;
   padding: 2rem;
@@ -6,6 +6,13 @@ div {
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
+}
+
+h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 button {
@@ -18,4 +25,15 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem; /* Optioneel: Ruimte tussen de knoppen */
+}
+
+.button-group button[type="button"] {
+  flex: 1; /* Knoppen nemen gelijke breedte */
+  width: auto; /* Overschrijft de standaard 100% breedte */
 }

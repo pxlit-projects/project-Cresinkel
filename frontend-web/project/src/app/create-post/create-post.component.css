@@ -1,5 +1,5 @@
 /* Algemene container styling */
-div {
+div:not(.button-group) {
   max-width: 400px;
   margin: 2rem auto;
   padding: 2rem;
@@ -29,8 +29,7 @@ label {
   font-weight: 500;
 }
 
-input[type="text"],
-input[type="password"],
+input,
 textarea,
 select {
   width: 100%;
@@ -52,7 +51,7 @@ select:focus {
 
 /* Standaard styling voor de knop */
 button[type="button"] {
-  width: 100%;
+  width: auto;
   padding: 0.75rem;
   font-size: 1rem;
   color: #fff;

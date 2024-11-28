@@ -1,9 +1,6 @@
 package be.pxl.services.controller;
 
-import be.pxl.services.domain.dto.DraftsRequest;
-import be.pxl.services.domain.dto.PostRequest;
-import be.pxl.services.domain.dto.PostResponse;
-import be.pxl.services.domain.dto.PublishDraftRequest;
+import be.pxl.services.domain.dto.*;
 import be.pxl.services.service.IPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,9 +33,23 @@ public class PostController {
 
     @PostMapping("/publishDraft")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void publishDraft(@RequestBody PublishDraftRequest publishDraftRequest) {
-        System.out.println(publishDraftRequest);
-        postService.publishDraft(publishDraftRequest);
+    public void publishDraft(@RequestBody DraftRequest draftRequest) {
+        System.out.println(draftRequest);
+        postService.publishDraft(draftRequest);
+    }
+
+    @PostMapping("/editDraft")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void editDraft(@RequestBody EditDraftRequest editDraftRequest) {
+        System.out.println(editDraftRequest);
+        postService.editDraft(editDraftRequest);
+    }
+
+    @PostMapping("/draft")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<PostResponse> getDraft(@RequestBody DraftRequest draftRequest) {
+        System.out.println(draftRequest);
+        return postService.getDraft(draftRequest);
     }
 
     @GetMapping("/posts")

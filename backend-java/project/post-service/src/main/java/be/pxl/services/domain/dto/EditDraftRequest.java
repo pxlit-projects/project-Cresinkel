@@ -10,7 +10,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PublishDraftRequest {
+public class EditDraftRequest {
     @Nonnull
     private Long id;
+    @Nonnull
+    private String title;
+    @Nonnull
+    private String description;
 }

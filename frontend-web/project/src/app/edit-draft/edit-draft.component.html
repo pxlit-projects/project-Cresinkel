@@ -1,0 +1,15 @@
+<app-navbar></app-navbar>
+<div>
+  <h2>Edit Your Draft</h2>
+  <form>
+    <div>
+      <label for="title">Title</label>
+      <input id="title" [(ngModel)]="title" name="title" required />
+    </div>
+    <div>
+      <label for="description">Description</label>
+      <textarea id="description" [(ngModel)]="description" name="description" required></textarea>
+    </div>
+    <button type="button" (click)="saveDraft()">Save Draft</button>
+  </form>
+</div>

@@ -41,6 +41,7 @@ export class DraftsComponent implements OnInit {
         next: (data) => {
           this.drafts = data;
           console.log(this.drafts);
+          console.log(this.drafts[1].lastEditedDate)
         },
         error: (err) => {
           console.error('Error fetching drafts:', err);
@@ -58,5 +59,9 @@ export class DraftsComponent implements OnInit {
         alert('Er is een fout opgetreden bij het publishen van de draft.');
       }
     });
+  }
+
+  edit(id: number): void {
+    this.router.navigate(['/edit-draft', id]);
   }
 }

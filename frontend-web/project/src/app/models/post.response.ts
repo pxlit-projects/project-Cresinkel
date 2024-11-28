@@ -4,5 +4,6 @@ export interface PostResponse {
   description: string;
   author: string;
   publicationDate: string;
+  lastEditedDate: string;
   draft: boolean;
 }

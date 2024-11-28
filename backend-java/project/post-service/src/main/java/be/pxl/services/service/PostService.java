@@ -1,20 +1,15 @@
 package be.pxl.services.service;
 
 import be.pxl.services.domain.Post;
-import be.pxl.services.domain.dto.DraftsRequest;
-import be.pxl.services.domain.dto.PostRequest;
-import be.pxl.services.domain.dto.PostResponse;
-import be.pxl.services.domain.dto.PublishDraftRequest;
+import be.pxl.services.domain.dto.*;
 import be.pxl.services.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,11 +42,12 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public void publishDraft(PublishDraftRequest publishDraftRequest) {
-        Optional<Post> optPost = postRepository.findById(publishDraftRequest.getId());
+    public void publishDraft(DraftRequest draftRequest) {
+        Optional<Post> optPost = postRepository.findById(draftRequest.getId());
         if (optPost.isPresent()) {
             Post post = optPost.get();
             post.setDraft(false);
+            post.setPublicationDate(LocalDateTime.now());
             postRepository.save(post);
         }
     }
@@ -64,5 +60,27 @@ public class PostService implements IPostService {
                 .toList();
         System.out.println(response);
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<PostResponse> getDraft(DraftRequest draftRequest) {
+        Optional<PostResponse> optResponse = postRepository.findById(draftRequest.getId()).map(PostResponse::mapToPostResponse);
+        if (optResponse.isPresent()) {
+            PostResponse response = optResponse.get();
+            return ResponseEntity.ok(response);
+        }
+        return null;
+    }
+
+    @Override
+    public void editDraft(EditDraftRequest editDraftRequest) {
+        Optional<Post> optPost = postRepository.findById(editDraftRequest.getId());
+        if (optPost.isPresent()) {
+            Post post = optPost.get();
+            post.setTitle(editDraftRequest.getTitle());
+            post.setDescription(editDraftRequest.getDescription());
+            post.setLastEditedDate(LocalDateTime.now());
+            postRepository.save(post);
+        }
     }
 }

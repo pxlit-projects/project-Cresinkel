@@ -1,9 +1,6 @@
 package be.pxl.services.service;
 
-import be.pxl.services.domain.dto.DraftsRequest;
-import be.pxl.services.domain.dto.PostRequest;
-import be.pxl.services.domain.dto.PostResponse;
-import be.pxl.services.domain.dto.PublishDraftRequest;
+import be.pxl.services.domain.dto.*;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -13,7 +10,11 @@ public interface IPostService {
 
     ResponseEntity<List<PostResponse>> getDrafts(DraftsRequest draftsRequest);
 
-    void publishDraft(PublishDraftRequest publishDraftRequest);
+    void publishDraft(DraftRequest draftRequest);
 
     ResponseEntity<List<PostResponse>> getPosts();
+
+    ResponseEntity<PostResponse> getDraft(DraftRequest draftRequest);
+
+    void editDraft(EditDraftRequest editDraftRequest);
 }

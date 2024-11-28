@@ -1,11 +1,27 @@
 <app-navbar></app-navbar>
 <div>
-  <h2>Published Posts</h2>
-  <div *ngIf="posts.length === 0">
+  <div>
+    <div class="filter">
+      <label for="dateFilter">Filter by Date:</label>
+      <input id="dateFilter" [(ngModel)]="dateFilter" (input)="filterPosts()" placeholder="Enter date">
+    </div>
+
+    <div class="filter">
+      <label for="authorFilter">Filter by Author:</label>
+      <input id="authorFilter" [(ngModel)]="authorFilter" (input)="filterPosts()" placeholder="Enter author">
+    </div>
+
+    <div class="filter">
+      <label for="descriptionFilter">Filter by Description:</label>
+      <input id="descriptionFilter" [(ngModel)]="descriptionFilter" (input)="filterPosts()" placeholder="Enter description">
+    </div>
+  </div>
+
+  <div *ngIf="filteredPosts.length === 0">
     <p>No posts found.</p>
   </div>
 
-  <div *ngFor="let post of posts">
+  <div *ngFor="let post of filteredPosts">
     <h2>{{ post.title }}</h2>
     <p>{{ post.description }}</p>
     <p><strong>Publication Date:</strong> {{ post.publicationDate }}</p>

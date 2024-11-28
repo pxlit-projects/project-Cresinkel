@@ -18,6 +18,7 @@ public class PostResponse {
     private String description;
     private String author;
     private LocalDateTime publicationDate;
+    private boolean isDraft;
 
     public static PostResponse mapToPostResponse(Post post) {
         return PostResponse.builder()
@@ -26,6 +27,7 @@ public class PostResponse {
                 .description(post.getDescription())
                 .author(post.getAuthor())
                 .publicationDate(post.getPublicationDate())
+                .isDraft(post.isDraft())
                 .build();
     }
 }

@@ -14,6 +14,18 @@ export class NavbarComponent {
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/']); // Navigeer terug naar de loginpagina
+    this.router.navigate(['/']);
+  }
+
+  toDrafts() {
+    this.router.navigate(['/drafts']);
+  }
+
+  toCreatePost() {
+    this.router.navigate(['/create-post']);
+  }
+
+  toPosts() {
+    this.router.navigate(['/posts']);
   }
 }

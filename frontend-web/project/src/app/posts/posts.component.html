@@ -1,0 +1,14 @@
+<app-navbar></app-navbar>
+<div>
+  <h2>Published Posts</h2>
+  <div *ngIf="posts.length === 0">
+    <p>No posts found.</p>
+  </div>
+
+  <div *ngFor="let post of posts">
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.description }}</p>
+    <p><strong>Publication Date:</strong> {{ post.publicationDate }}</p>
+    <p><strong>Author:</strong> {{ post.author }}</p>
+  </div>
+</div>

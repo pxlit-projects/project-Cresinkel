@@ -1,0 +1,15 @@
+<app-navbar></app-navbar>
+<div>
+    <h2>Your Drafts</h2>
+    <div *ngIf="drafts.length === 0">
+      <p>No drafts found.</p>
+    </div>
+
+    <div *ngFor="let draft of drafts" class="draft-card">
+      <h2>{{ draft.title }}</h2>
+      <p>{{ draft.description }}</p>
+      <p><strong>Publication Date:</strong> {{ draft.publicationDate }}</p>
+      <p><strong>Author:</strong> {{ draft.author }}</p>
+      <button type="button" (click)="publish(draft.id)">Publish Draft</button>
+    </div>
+</div>

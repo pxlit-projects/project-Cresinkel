@@ -1,7 +1,7 @@
 <app-navbar></app-navbar>
 <div>
   <h2>Create New Post</h2>
-  <form (ngSubmit)="onCreatePost()">
+  <form>
     <div>
       <label for="title">Title</label>
       <input id="title" [(ngModel)]="title" name="title" required />
@@ -10,6 +10,9 @@
       <label for="description">Description</label>
       <textarea id="description" [(ngModel)]="description" name="description" required></textarea>
     </div>
-    <button type="submit">Create Post</button>
+    <div class="button-group">
+      <button type="button" (click)="onCreatePost(false)">Create Post</button>
+      <button type="button" (click)="onCreatePost(true)">Save as Concept</button>
+    </div>
   </form>
 </div>

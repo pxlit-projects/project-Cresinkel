@@ -51,7 +51,7 @@ select:focus {
 }
 
 /* Standaard styling voor de knop */
-button[type="submit"] {
+button[type="button"] {
   width: 100%;
   padding: 0.75rem;
   font-size: 1rem;
@@ -64,12 +64,23 @@ button[type="submit"] {
 }
 
 /* Hover- en active-effecten voor de knop */
-button[type="submit"]:hover {
+button[type="button"]:hover {
   background-color: #0056b3;
 }
 
-button[type="submit"]:active {
+button[type="button"]:active {
   transform: scale(0.98);
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem; /* Optioneel: Ruimte tussen de knoppen */
+}
+
+.button-group button[type="button"] {
+  flex: 1; /* Knoppen nemen gelijke breedte */
+  width: auto; /* Overschrijft de standaard 100% breedte */
 }
 
 /* Responsief gedrag */

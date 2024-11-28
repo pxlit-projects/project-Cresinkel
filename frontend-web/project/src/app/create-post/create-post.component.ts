@@ -25,7 +25,7 @@ export class CreatePostComponent {
     private http: HttpClient
   ) {}
 
-  onCreatePost() {
+  onCreatePost(isDraft: boolean = false) {
     const currentUser = this.authService.currentUserValue;
 
     if (currentUser.role !== 'redacteur') {
@@ -36,12 +36,20 @@ export class CreatePostComponent {
     const postData = {
       title: this.title,
       description: this.description,
-      author: currentUser.username
+      author: currentUser.username,
+      isDraft: isDraft
     };
+
+    console.log(postData);
 
     this.http.post('http://localhost:8080/api/post', postData).subscribe({
       next: () => {
-        this.router.navigate(['/']);
+        if (isDraft) {
+          this.router.navigate(['/drafts']);
+        } else {
+          this.router.navigate(['/']);
+        }
+
       },
       error: (error) => {
         console.error('Error creating post:', error);

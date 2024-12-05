@@ -16,7 +16,7 @@ export class AuthGuard implements CanActivate {
     if (currentUser && currentUser.role === 'redacteur') {
       return true;
     }
-    this.router.navigate(['/']);
+    this.router.navigate(['/posts']);
     return false;
   }
 }

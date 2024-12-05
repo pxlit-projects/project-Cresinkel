@@ -10,6 +10,6 @@ export const routes: Routes = [
   { path: '', component: LoginComponent }, // Default route goes to LoginComponent
   { path: 'create-post', component: CreatePostComponent, canActivate: [AuthGuard] },
   { path: 'drafts', component: DraftsComponent, canActivate: [AuthGuard] },
-  { path: 'posts', component: PostsComponent, canActivate: [AuthGuard] },
+  { path: 'posts', component: PostsComponent },
   { path: 'edit-draft/:id', component: EditDraftComponent, canActivate: [AuthGuard] },
 ];

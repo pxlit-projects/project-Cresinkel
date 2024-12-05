@@ -20,6 +20,6 @@ export class LoginComponent {
 
   login() {
     this.authService.login(this.username, this.role);
-    this.router.navigate(['/create-post']);
+    this.router.navigate(['/posts']);
   }
 }

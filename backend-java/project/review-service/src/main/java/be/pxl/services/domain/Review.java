@@ -9,14 +9,13 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "post")
+@Table(name = "review")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Post {
+public class Review {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String title;
@@ -24,7 +23,6 @@ public class Post {
     private String author;
     private LocalDateTime publicationDate;
     private LocalDateTime lastEditedDate;
-    private boolean isDraft;
     private boolean accepted = false;
     private String rejectionReason = "";
 }

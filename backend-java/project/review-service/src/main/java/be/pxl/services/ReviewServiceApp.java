@@ -6,15 +6,15 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
- *  PostServiceApp
+ *  Review Service App
  */
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-public class PostServiceApp
+public class ReviewServiceApp
 {
     public static void main( String[] args )
     {
-        SpringApplication.run(PostServiceApp.class, args);
+        SpringApplication.run(ReviewServiceApp.class, args);
     }
 }

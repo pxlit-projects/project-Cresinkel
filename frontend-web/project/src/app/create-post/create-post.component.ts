@@ -40,14 +40,12 @@ export class CreatePostComponent {
       isDraft: isDraft
     };
 
-    console.log(postData);
-
-    this.http.post('http://localhost:8080/api/post', postData).subscribe({
+    this.http.post('http://localhost:8081/api/post', postData).subscribe({
       next: () => {
         if (isDraft) {
           this.router.navigate(['/drafts']);
         } else {
-          this.router.navigate(['/']);
+          this.router.navigate(['/posts']);
         }
 
       },

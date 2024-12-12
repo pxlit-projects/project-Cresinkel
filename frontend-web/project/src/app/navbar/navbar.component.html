@@ -4,5 +4,13 @@
     <button *ngIf="currentUser.role == 'redacteur'" (click)="toCreatePost()">Create a Post</button>
     <button (click)="toPosts()">Published Posts</button>
     <button *ngIf="currentUser.role == 'redacteur'" (click)="toDrafts()">Your Drafts</button>
+    <button *ngIf="currentUser.role == 'admin'" (click)="toReviews()">Reviews</button>
+  </div>
+
+  <div class="notification-container">
+    <div *ngFor="let notification of notifications" class="notification-popup">
+      <p>{{ notification.description }}</p>
+      <button (click)="deleteNotification(notification.id)">Delete</button>
+    </div>
   </div>
 </nav>

@@ -20,41 +20,42 @@ public class PostController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void createPost(@RequestBody PostRequest postRequest) {
-        System.out.println(postRequest);
+        System.out.println("Creating post: " + postRequest);
         postService.createPost(postRequest);
     }
 
     @PostMapping("/drafts")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<List<PostResponse>> getDrafts(@RequestBody DraftsRequest draftsRequest) {
-        System.out.println(draftsRequest);
+        System.out.println("Getting Drafts: " + draftsRequest);
         return postService.getDrafts(draftsRequest);
     }
 
-    @PostMapping("/publishDraft")
+    @PostMapping("/sendInDraft")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void publishDraft(@RequestBody DraftRequest draftRequest) {
-        System.out.println(draftRequest);
-        postService.publishDraft(draftRequest);
+    public void sendInDraft(@RequestBody DraftRequest draftRequest) {
+        System.out.println("Sending in draft: " + draftRequest);
+        postService.sendForReview(draftRequest);
     }
 
     @PostMapping("/editDraft")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void editDraft(@RequestBody EditDraftRequest editDraftRequest) {
-        System.out.println(editDraftRequest);
+        System.out.println("Editing Draft: " + editDraftRequest);
         postService.editDraft(editDraftRequest);
     }
 
     @PostMapping("/draft")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<PostResponse> getDraft(@RequestBody DraftRequest draftRequest) {
-        System.out.println(draftRequest);
+        System.out.println("Getting 1 Draft: " + draftRequest);
         return postService.getDraft(draftRequest);
     }
 
     @GetMapping("/posts")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<List<PostResponse>> getPosts() {
+        System.out.println("Getting Posts");
         return postService.getPosts();
     }
 }

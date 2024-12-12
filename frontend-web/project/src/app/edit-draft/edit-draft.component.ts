@@ -36,12 +36,11 @@ export class EditDraftComponent implements OnInit {
   }
 
   getDraft(id: number): void {
-    this.http.post<PostResponse>('http://localhost:8080/api/post/draft', { id })
+    this.http.post<PostResponse>('http://localhost:8081/api/post/draft', { id })
       .subscribe({
         next: (data) => {
           this.title = data.title;
           this.description = data.description;
-          console.log(data);
         },
         error: (err) => {
           console.error('Error fetching drafts:', err);
@@ -56,9 +55,7 @@ export class EditDraftComponent implements OnInit {
       description: this.description
     };
 
-    console.log(postData);
-
-    this.http.post('http://localhost:8080/api/post/editDraft', postData).subscribe({
+    this.http.post('http://localhost:8081/api/post/editDraft', postData).subscribe({
       next: () => {
         this.router.navigate(['/drafts']);
       },

@@ -36,12 +36,10 @@ export class DraftsComponent implements OnInit {
   getDrafts(): void {
     const author = this.currentUser.username;
 
-    this.http.post<PostResponse[]>('http://localhost:8080/api/post/drafts', { author })
+    this.http.post<PostResponse[]>('http://localhost:8081/api/post/drafts', { author })
       .subscribe({
         next: (data) => {
           this.drafts = data;
-          console.log(this.drafts);
-          console.log(this.drafts[1].lastEditedDate)
         },
         error: (err) => {
           console.error('Error fetching drafts:', err);
@@ -49,14 +47,14 @@ export class DraftsComponent implements OnInit {
       });
   }
 
-  publish(id: number): void {
-    this.http.post('http://localhost:8080/api/post/publishDraft', id).subscribe({
+  sendIn(id: number): void {
+    this.http.post('http://localhost:8081/api/post/sendInDraft', id).subscribe({
       next: () => {
         this.getDrafts()
       },
       error: (error) => {
-        console.error('Error publishing draft:', error);
-        alert('Er is een fout opgetreden bij het publishen van de draft.');
+        console.error('Error sending in draft:', error);
+        alert('Er is een fout opgetreden bij het inzenden van de draft.');
       }
     });
   }

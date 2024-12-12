@@ -10,8 +10,9 @@
       <p>{{ draft.description }}</p>
       <p *ngIf="draft.lastEditedDate"><strong>Last Edited Date:</strong> {{ draft.lastEditedDate }}</p>
       <p><strong>Author:</strong> {{ draft.author }}</p>
+      <p *ngIf="draft.rejectionReason"><strong>Last reason of rejection:</strong> {{ draft.rejectionReason }}</p>
       <div class="button-group">
-        <button type="button" (click)="publish(draft.id)">Publish Draft</button>
+        <button type="button" (click)="sendIn(draft.id)">Send in Draft</button>
         <button type="button" (click)="edit(draft.id)">Edit Draft</button>
       </div>
     </div>

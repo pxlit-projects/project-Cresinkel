@@ -10,11 +10,13 @@ public interface IPostService {
 
     ResponseEntity<List<PostResponse>> getDrafts(DraftsRequest draftsRequest);
 
-    void publishDraft(DraftRequest draftRequest);
+    void sendForReview(DraftRequest draftRequest);
 
     ResponseEntity<List<PostResponse>> getPosts();
 
     ResponseEntity<PostResponse> getDraft(DraftRequest draftRequest);
 
     void editDraft(EditDraftRequest editDraftRequest);
+
+    String getUserOfPost(Long postId);
 }

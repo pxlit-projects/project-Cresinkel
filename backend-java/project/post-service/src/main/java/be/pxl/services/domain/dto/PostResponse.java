@@ -20,6 +20,8 @@ public class PostResponse {
     private LocalDateTime publicationDate;
     private LocalDateTime lastEditedDate;
     private boolean isDraft;
+    private boolean accepted;
+    private String rejectionReason;
 
     public static PostResponse mapToPostResponse(Post post) {
         return PostResponse.builder()
@@ -30,6 +32,8 @@ public class PostResponse {
                 .publicationDate(post.getPublicationDate())
                 .lastEditedDate(post.getLastEditedDate())
                 .isDraft(post.isDraft())
+                .accepted(post.isAccepted())
+                .rejectionReason(post.getRejectionReason())
                 .build();
     }
 }

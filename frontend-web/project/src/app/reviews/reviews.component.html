@@ -1,0 +1,21 @@
+<app-navbar></app-navbar>
+<div>
+  <div *ngIf="reviews.length === 0">
+    <p>No reviews found.</p>
+  </div>
+
+  <div *ngFor="let review of reviews">
+    <h2>{{ review.title }}</h2>
+    <p>{{ review.description }}</p>
+    <p><strong>Publication Date:</strong> {{ review.publicationDate }}</p>
+    <p><strong>Author:</strong> {{ review.author }}</p>
+    <div>
+      <label for="rejection">Rejection Reason</label>
+      <textarea id="rejection" [(ngModel)]="rejectionReason" name="rejection" required></textarea>
+    </div>
+    <div class="button-group">
+      <button type="button" (click)="sendIn(true, review.id)">Accept</button>
+      <button type="button" (click)="sendIn(false, review.id)">Deny</button>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,7 @@ import { AuthGuard } from './auth.guard';
 import {DraftsComponent} from "./drafts/drafts.component";
 import {PostsComponent} from "./posts/posts.component";
 import {EditDraftComponent} from "./edit-draft/edit-draft.component";
+import {ReviewsComponent} from "./reviews/reviews.component";
 
 export const routes: Routes = [
   { path: '', component: LoginComponent }, // Default route goes to LoginComponent
@@ -12,4 +13,5 @@ export const routes: Routes = [
   { path: 'drafts', component: DraftsComponent, canActivate: [AuthGuard] },
   { path: 'posts', component: PostsComponent },
   { path: 'edit-draft/:id', component: EditDraftComponent, canActivate: [AuthGuard] },
+  { path: 'reviews', component: ReviewsComponent },
 ];

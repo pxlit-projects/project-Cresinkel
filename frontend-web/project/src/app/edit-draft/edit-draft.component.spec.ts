@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditDraftComponent } from './edit-draft.component';
+import {HttpClientTestingModule} from "@angular/common/http/testing";
+import {RouterTestingModule} from "@angular/router/testing";
+import {FormsModule} from "@angular/forms";
 
 describe('EditDraftComponent', () => {
   let component: EditDraftComponent;
@@ -8,7 +11,12 @@ describe('EditDraftComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditDraftComponent]
+      imports: [
+        EditDraftComponent,
+        HttpClientTestingModule,
+        RouterTestingModule,
+        FormsModule,
+      ]
     })
     .compileComponents();
 

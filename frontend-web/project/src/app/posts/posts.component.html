@@ -26,5 +26,38 @@
     <p>{{ post.description }}</p>
     <p><strong>Publication Date:</strong> {{ post.publicationDate }}</p>
     <p><strong>Author:</strong> {{ post.author }}</p>
+
+    <div>
+      <h3>Comments</h3>
+      <div class="comments-section" *ngIf="comments[post.id] && comments[post.id].length > 0; else noComments">
+        <div *ngFor="let comment of comments[post.id]">
+          <div class="comments-section" *ngIf="!editMode[comment.commentId]; else editCommentMode">
+            <p>{{ comment.description }}</p>
+            <p><strong>Author:</strong> {{ comment.author }}</p>
+            <button (click)="toggleEditMode(comment.commentId)">Edit</button>
+            <button (click)="deleteComment(comment.commentId, post.id)">Delete</button>
+          </div>
+
+          <ng-template #editCommentMode>
+            <input
+              type="text"
+              [(ngModel)]="editCommentText[comment.commentId]"
+              placeholder="Edit comment"
+            />
+            <button (click)="saveComment(comment.commentId, post.id)">Save</button>
+            <button (click)="toggleEditMode(comment.commentId)">Cancel</button>
+          </ng-template>
+        </div>
+      </div>
+      <ng-template #noComments>
+        <p>No comments yet.</p>
+      </ng-template>
+      <input
+        type="text"
+        [(ngModel)]="newComment[post.id]"
+        placeholder="Add a comment"
+      >
+      <button (click)="addComment(post.id)">Post Comment</button>
+    </div>
   </div>
 </div>

@@ -1,4 +1,4 @@
-div:not(.filter) {
+div:not(.filter) div:not(.comments-section) {
   max-width: 400px;
   margin: 2rem auto;
   padding: 2rem;
@@ -23,4 +23,17 @@ input{
   font-size: 1rem;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   margin-bottom: 8px;
+}
+
+button {
+  width: auto;
+  padding: 0.75rem;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  margin-right: 5px;
 }

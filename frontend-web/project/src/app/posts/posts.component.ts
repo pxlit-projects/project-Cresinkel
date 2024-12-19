@@ -6,6 +6,7 @@ import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../auth.service";
 import {Router} from "@angular/router";
 import {FormsModule} from "@angular/forms";
+import {CommentResponse} from "../models/comment.response";
 
 @Component({
   selector: 'app-posts',
@@ -25,6 +26,10 @@ export class PostsComponent implements OnInit {
   posts: PostResponse[] = [];
   filteredPosts: PostResponse[] = [];
   currentUser: any;
+  comments: { [postId: number]: CommentResponse[] } = {};
+  newComment: { [postId: number]: string } = {};
+  editMode: { [commentId: number]: boolean } = {};
+  editCommentText: { [commentId: number]: string } = {};
 
   // Filters
   dateFilter: string = '';
@@ -56,13 +61,94 @@ export class PostsComponent implements OnInit {
           this.posts.sort((a, b) => {
             const dateA = new Date(a.publicationDate).getTime();
             const dateB = new Date(b.publicationDate).getTime();
-            return dateB - dateA; // Newest first
+            return dateB - dateA;
           });
+
+          this.posts.forEach(post => this.getCommentsForPost(post.id));
 
           this.filteredPosts = [...this.posts];
         },
         error: (err) => {
           console.error('Error fetching drafts:', err);
+        }
+      });
+  }
+
+  getCommentsForPost(postId: number): void {
+    this.http.get<CommentResponse[]>(`http://localhost:8083/api/comment/${postId}`)
+      .subscribe({
+        next: (data) => {
+          this.comments[postId] = data;
+        },
+        error: (err) => {
+          console.error(`Error fetching comments for post ${postId}:`, err);
+          this.comments[postId] = [];
+        }
+      });
+  }
+
+  addComment(postId: number): void {
+    const comment = this.newComment[postId]?.trim();
+    if (comment) {
+      this.http.post(`http://localhost:8083/api/comment`, {
+        description: comment,
+        author: this.currentUser.username,
+        postId: postId
+      })
+        .subscribe({
+          next: () => {
+            if (!this.comments[postId]) {
+              this.comments[postId] = [];
+            }
+
+            this.getCommentsForPost(postId);
+            this.newComment[postId] = '';
+          },
+          error: (err) => {
+            console.error(`Error adding comment to post ${postId}:`, err);
+          }
+        });
+    }
+  }
+
+  toggleEditMode(commentId: number): void {
+    this.editMode[commentId] = !this.editMode[commentId];
+    if (this.editMode[commentId]) {
+      const comment = Object.values(this.comments).flat().find(c => c.commentId === commentId);
+      this.editCommentText[commentId] = comment?.description || '';
+    }
+  }
+
+  saveComment(commentId: number, postId: number): void {
+    const updatedDescription = this.editCommentText[commentId]?.trim();
+    if (updatedDescription) {
+      this.http.put(`http://localhost:8083/api/comment/${this.currentUser.username}`, {
+        description: updatedDescription,
+        commentId: commentId
+      })
+        .subscribe({
+          next: () => {
+            const comment = this.comments[postId].find(c => c.commentId === commentId);
+            if (comment) {
+              comment.description = updatedDescription;
+            }
+            this.toggleEditMode(commentId);
+          },
+          error: (err) => {
+            console.error(`Error updating comment ${commentId}:`, err);
+          }
+        });
+    }
+  }
+
+  deleteComment(commentId: number, postId: number): void {
+    this.http.delete(`http://localhost:8083/api/comment/${commentId}/${this.currentUser.username}`)
+      .subscribe({
+        next: () => {
+          this.getCommentsForPost(postId);
+        },
+        error: (err) => {
+          console.error(`Error deleting comment ${commentId}:`, err);
         }
       });
   }

@@ -27,7 +27,7 @@ public class PostRequestTests {
         String author = "Test Author";
 
         // Act
-        PostRequest postRequest = new PostRequest(title, description, author);
+        PostRequest postRequest = new PostRequest(title, description, author, false);
 
         // Assert
         assertNotNull(postRequest);

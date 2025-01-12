@@ -16,9 +16,10 @@ public class PostTests {
         String description = "Test Description";
         String author = "Test Author";
         LocalDateTime publicationDate = LocalDateTime.now();
+        LocalDateTime lastEditedDate = LocalDateTime.now();
 
         // Act
-        Post post = new Post(id, title, description, author, publicationDate);
+        Post post = new Post(id, title, description, author, publicationDate, lastEditedDate, false, true, "");
 
         // Assert
         assertNotNull(post);

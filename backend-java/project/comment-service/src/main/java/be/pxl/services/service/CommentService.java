@@ -50,14 +50,14 @@ public class CommentService implements ICommentService {
             if (!comment.getAuthor().equals(author)) {
                 String error = "Comment is not made by author: " + author;
                 log.error(error);
-                throw new BadRequestException(error);
+                throw new IllegalArgumentException(error);
             }
             commentRepository.deleteById(commentId);
             log.info("Deleted Comment with id: " + commentId);
         } else {
             String error = "Comment with id: " + commentId + " was not found when trying to delete it.";
             log.error(error);
-            throw new BadRequestException(error);
+            throw new IllegalArgumentException(error);
         }
     }
 
@@ -72,7 +72,7 @@ public class CommentService implements ICommentService {
             if (!comment.getAuthor().equals(author)) {
                 String error = "Comment is not made by author: " + author;
                 log.error(error);
-                throw new BadRequestException(error);
+                throw new IllegalArgumentException(error);
             }
 
             comment.setDescription(updateCommentRequest.getDescription());
@@ -81,7 +81,7 @@ public class CommentService implements ICommentService {
         } else {
             String error = "Comment with ID: " + updateCommentRequest.getCommentId() + " was not found";
             log.error(error);
-            throw new BadRequestException(error);
+            throw new IllegalArgumentException(error);
         }
     }
 }

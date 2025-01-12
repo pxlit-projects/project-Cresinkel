@@ -1,72 +1,191 @@
 package be.pxl.services.controller;
 
-import be.pxl.services.domain.dto.PostRequest;
+import be.pxl.services.domain.Post;
+import be.pxl.services.domain.dto.*;
 import be.pxl.services.service.IPostService;
+import be.pxl.services.repository.PostRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(PostController.class)
+@SpringBootTest
+@Testcontainers
+@TestPropertySource(locations = "classpath:application-test.properties")
+@AutoConfigureMockMvc
 class PostControllerTests {
+    @Autowired
+    MockMvc mockMvc;
 
     @Autowired
-    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
 
-    @MockBean
-    private IPostService postService; // Mocking the service
+    @Autowired
+    private PostRepository postRepository;
 
-    private PostRequest postRequest;
+    @Container
+    private static MySQLContainer mySQLContainer = new MySQLContainer("mysql:5.7.37");
+
+    @DynamicPropertySource
+    static void setDatasourceProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mySQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", mySQLContainer::getUsername);
+        registry.add("spring.datasource.password", mySQLContainer::getPassword);
+    }
 
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this); // Initialize mocks
-        postRequest = new PostRequest();
-        postRequest.setTitle("Test Title");
-        postRequest.setDescription("Test Content");
-        postRequest.setAuthor("Author");
+    public void setup() {
+        postRepository.deleteAll();
     }
 
     @Test
-    void testCreatePost_Success() throws Exception {
-        // Given: a valid PostRequest object, and the service is expected to do nothing
-        doNothing().when(postService).createPost(any(PostRequest.class));
+    void testCreatePost() throws Exception {
+        PostRequest postRequest = new PostRequest("Title", "Description", "Author", true);
 
-        // When: we send a POST request to create a post
         mockMvc.perform(post("/api/post")
-                        .contentType("application/json")
-                        .content("{\"title\":\"Test Title\",\"content\":\"Test Content\"}"))
-                // Then: the response status should be CREATED (201)
-                .andExpect(status().is(HttpStatus.CREATED.value()));
+                        .header("Role", "redacteur")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postRequest)))
+                .andExpect(status().isCreated());
 
-        // Verify that the service method was called once with the postRequest object
-        verify(postService, times(1)).createPost(any(PostRequest.class));
+        assertEquals(1, postRepository.findAll().size());
     }
 
     @Test
-    void testCreatePost_MissingTitle() throws Exception {
-        // Simulate invalid PostRequest (e.g., missing title)
-        String invalidRequestJson = "{\"title\":null,\"description\":\"Test Description\",\"author\":\"Test Author\"}";
+    void testCreatePostForbidden() throws Exception {
+        PostRequest postRequest = new PostRequest("Title", "Description", "Author", true);
 
-        // When: we send a POST request with missing or invalid data (title is null)
         mockMvc.perform(post("/api/post")
-                        .contentType("application/json")
-                        .content(invalidRequestJson))
-                // Then: the response status should be BAD_REQUEST (400) due to missing title
-                .andExpect(status().isBadRequest());
+                        .header("Role", "gebruiker")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postRequest)))
+                .andExpect(status().isForbidden()); // Expect Forbidden
 
-        // Verify that the service method was not called
-        verify(postService, times(0)).createPost(any(PostRequest.class));
+        assertEquals(0, postRepository.findAll().size());
+    }
+
+    @Test
+    void testGetDrafts() throws Exception {
+        postRepository.deleteAll();
+        postRepository.save(Post.builder()
+                .title("Title 1")
+                .description("Description 1")
+                .author("Author")
+                .isDraft(true)
+                .build());
+        postRepository.save(Post.builder()
+                .title("Title 2")
+                .description("Description 2")
+                .author("Author")
+                .isDraft(true)
+                .build());
+
+        mockMvc.perform(post("/api/post/drafts")
+                        .header("Role", "gebruiker")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"author\": \"Author\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2));
+    }
+
+    @Test
+    void testSendInDraft() throws Exception {
+        Post draft = postRepository.save(Post.builder()
+                .title("Title")
+                .description("Description")
+                .author("Author")
+                .isDraft(true)
+                .build());
+
+        mockMvc.perform(post("/api/post/sendInDraft")
+                        .header("Role", "gebruiker")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\": " + draft.getId() + "}"))
+                .andExpect(status().isAccepted());
+
+        Post updatedPost = postRepository.findById(draft.getId()).get();
+        assertEquals(false, updatedPost.isAccepted());
+        assertEquals(false, updatedPost.isDraft());
+    }
+
+    @Test
+    void testEditDraft() throws Exception {
+        Post draft = postRepository.save(Post.builder()
+                .title("Title")
+                .description("Description")
+                .author("Author")
+                .isDraft(true)
+                .build());
+
+        mockMvc.perform(post("/api/post/editDraft")
+                        .header("Role", "redacteur")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\": " + draft.getId() + ", \"title\": \"Updated Title\", \"description\": \"Updated Description\"}"))
+                .andExpect(status().isAccepted());
+
+        Post updatedPost = postRepository.findById(draft.getId()).get();
+        assertEquals("Updated Title", updatedPost.getTitle());
+        assertEquals("Updated Description", updatedPost.getDescription());
+    }
+
+    @Test
+    void testGetPost() throws Exception {
+        Post draft = postRepository.save(Post.builder()
+                .title("Title")
+                .description("Description")
+                .author("Author")
+                .isDraft(true)
+                .build());
+
+        mockMvc.perform(post("/api/post/draft")
+                        .header("Role", "gebruiker")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\": " + draft.getId() + "}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Title"));
+    }
+
+    @Test
+    void testGetPosts() throws Exception {
+        postRepository.save(Post.builder()
+                .title("Title 1")
+                .description("Description 1")
+                .author("Author")
+                .isDraft(false)
+                .accepted(true)
+                .build());
+        postRepository.save(Post.builder()
+                .title("Title 2")
+                .description("Description 2")
+                .author("Author")
+                .isDraft(false)
+                .accepted(true)
+                .build());
+
+        mockMvc.perform(get("/api/post/posts"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2));
     }
 }

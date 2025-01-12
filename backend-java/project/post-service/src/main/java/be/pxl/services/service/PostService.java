@@ -121,7 +121,7 @@ public class PostService implements IPostService {
         log.info("Fetching author of post with ID: {}", postId);
         Post post = postRepository.findById(postId).orElseThrow(() -> {
             log.warn("Post not found with ID: {}", postId);
-            return new BadRequestException("Post not found");
+            return new IllegalArgumentException("Post not found");
         });
         log.info("Author found: {}", post.getAuthor());
         return post.getAuthor();
@@ -132,7 +132,7 @@ public class PostService implements IPostService {
         log.info("Processing review response: {}", reviewResponse);
         Post post = postRepository.findById(reviewResponse.getId()).orElseThrow(() -> {
             log.warn("Post not found for review ID: {}", reviewResponse.getId());
-            return new BadRequestException("Post not found");
+            return new IllegalArgumentException("Post not found");
         });
 
         post.setAccepted(reviewResponse.isAccepted());
@@ -152,17 +152,17 @@ public class PostService implements IPostService {
         log.info("Sending post with ID: {} for acceptation", postId);
         Post post = postRepository.findById(postId).orElseThrow(() -> {
             log.warn("Post not found with ID: {}", postId);
-            return new BadRequestException("Post not found");
+            return new IllegalArgumentException("Post not found");
         });
 
         if (post.isAccepted()) {
             String error = "Post is already accepted";
             log.error(error);
-            throw new BadRequestException(error);
+            throw new IllegalArgumentException(error);
         } else if (post.isDraft()) {
             String error = "Post is a draft";
             log.error(error);
-            throw new BadRequestException(error);
+            throw new IllegalArgumentException(error);
         }
 
         log.info("Post is valid for review. Sending to review queue: {}", post);

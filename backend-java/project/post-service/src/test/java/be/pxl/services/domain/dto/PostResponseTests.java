@@ -31,9 +31,10 @@ public class PostResponseTests {
         String description = "Test Description";
         String author = "Test Author";
         LocalDateTime publicationDate = LocalDateTime.now();
+        LocalDateTime lastEditedDate = LocalDateTime.now();
 
         // Act
-        PostResponse postResponse = new PostResponse(id, title, description, author, publicationDate);
+        PostResponse postResponse = new PostResponse(id, title, description, author, publicationDate, lastEditedDate, false, true, "");
 
         // Assert
         assertNotNull(postResponse);

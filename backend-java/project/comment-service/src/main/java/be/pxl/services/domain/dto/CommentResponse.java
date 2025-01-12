@@ -17,6 +17,9 @@ public class CommentResponse {
     private String author;
 
     public static CommentResponse mapToCommentResponse(Comment comment) {
+        if (comment == null) {
+            return null;
+        }
         return CommentResponse.builder()
                 .commentId(comment.getId())
                 .postId(comment.getPostId())

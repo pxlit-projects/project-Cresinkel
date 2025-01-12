@@ -44,12 +44,18 @@ export class PostsComponent implements OnInit {
   }
 
   getPosts(): void {
-    this.postService.getPosts().subscribe(posts => {
-      this.posts = posts;
-      this.posts.sort((a, b) => new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime());
-      this.filteredPosts = [...this.posts];
+    this.postService.getPosts().subscribe({
+      next: (posts) => {
+        this.posts = posts;
+        this.posts.sort((a, b) => new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime());
+        this.filteredPosts = [...this.posts];
 
-      this.posts.forEach(post => this.getCommentsForPost(post.id));
+        this.posts.forEach(post => this.getCommentsForPost(post.id));
+      },
+      error: () => {
+        this.posts = [];
+        this.filteredPosts = [];
+      }
     });
   }
 

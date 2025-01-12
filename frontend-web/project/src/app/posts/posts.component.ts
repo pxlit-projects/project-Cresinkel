@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {NavbarComponent} from "../navbar/navbar.component";
-import {CommonModule, NgForOf, NgIf} from "@angular/common";
+import {CommonModule, NgForOf, NgIf, DatePipe} from "@angular/common";
 import {PostResponse} from "../models/post.response";
 import {FormsModule} from "@angular/forms";
 import {CommentResponse} from "../models/comment.response";
@@ -18,7 +18,8 @@ import {CommentService} from "../services/comment.service";
     CommonModule
   ],
   templateUrl: './posts.component.html',
-  styleUrl: './posts.component.css'
+  styleUrl: './posts.component.css',
+  providers: [DatePipe]
 })
 export class PostsComponent implements OnInit {
   posts: PostResponse[] = [];
@@ -36,7 +37,8 @@ export class PostsComponent implements OnInit {
 
   constructor(
     private postService: PostService,
-    private commentService: CommentService
+    private commentService: CommentService,
+    private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {
@@ -48,6 +50,10 @@ export class PostsComponent implements OnInit {
       next: (posts) => {
         this.posts = posts;
         this.posts.sort((a, b) => new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime());
+        this.posts = posts.map(post => ({
+          ...post,
+          publicationDate: this.formatDate(post.publicationDate)
+        }));
         this.filteredPosts = [...this.posts];
 
         this.posts.forEach(post => this.getCommentsForPost(post.id));
@@ -110,5 +116,9 @@ export class PostsComponent implements OnInit {
         (this.descriptionFilter ? post.description.toLowerCase().includes(this.descriptionFilter.toLowerCase()) : true)
       );
     });
+  }
+
+  formatDate(date: string): string {
+    return this.datePipe.transform(date, 'dd MMMM yyyy HH:mm') || date;
   }
 }

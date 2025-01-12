@@ -3,7 +3,7 @@ import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from "@angular/forms";
 import { NavbarComponent } from "../navbar/navbar.component";
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {PostService} from "../services/post.service";
 
 @Component({
   selector: 'app-create-post',
@@ -20,12 +20,12 @@ export class CreatePostComponent {
   description: string = '';
 
   constructor(
+    private postService: PostService,
     private authService: AuthService,
     private router: Router,
-    private http: HttpClient
   ) {}
 
-  onCreatePost(isDraft: boolean = false) {
+  onCreatePost(isDraft: boolean = false): void {
     const currentUser = this.authService.currentUserValue;
 
     if (currentUser.role !== 'redacteur') {
@@ -40,18 +40,13 @@ export class CreatePostComponent {
       isDraft: isDraft
     };
 
-    const headers = new HttpHeaders({
-      'Role': currentUser.role
-    });
-
-    this.http.post('http://localhost:8081/api/post', postData, { headers }).subscribe({
+    this.postService.createPost(postData).subscribe({
       next: () => {
         if (isDraft) {
           this.router.navigate(['/drafts']);
         } else {
           this.router.navigate(['/posts']);
         }
-
       },
       error: (error) => {
         console.error('Error creating post:', error);

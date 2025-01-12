@@ -1,10 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {NavbarComponent} from "../navbar/navbar.component";
-import {PostResponse} from "../models/post.response";
 import {AuthService} from "../auth.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {PostService} from "../services/post.service";
 
 @Component({
   selector: 'app-edit-draft',
@@ -23,10 +22,10 @@ export class EditDraftComponent implements OnInit {
   currentUser: any;
 
   constructor(
+    private postService: PostService,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute,
-    private http: HttpClient
+    private route: ActivatedRoute
   ) {
     this.currentUser = this.authService.currentUserValue;
   }
@@ -39,20 +38,15 @@ export class EditDraftComponent implements OnInit {
   }
 
   getDraft(id: number): void {
-    const headers = new HttpHeaders({
-      'Role': this.currentUser.role
+    this.postService.getDraft(id).subscribe({
+      next: (data) => {
+        this.title = data.title;
+        this.description = data.description;
+      },
+      error: (err) => {
+        console.error('Error fetching draft:', err);
+      }
     });
-
-    this.http.post<PostResponse>('http://localhost:8081/api/post/draft', { id }, { headers })
-      .subscribe({
-        next: (data) => {
-          this.title = data.title;
-          this.description = data.description;
-        },
-        error: (err) => {
-          console.error('Error fetching drafts:', err);
-        }
-      });
   }
 
   saveDraft(): void {
@@ -62,11 +56,7 @@ export class EditDraftComponent implements OnInit {
       description: this.description
     };
 
-    const headers = new HttpHeaders({
-      'Role': this.currentUser.role
-    });
-
-    this.http.post('http://localhost:8081/api/post/editDraft', postData, { headers }).subscribe({
+    this.postService.saveDraft(postData).subscribe({
       next: () => {
         this.router.navigate(['/drafts']);
       },

@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {NavbarComponent} from "../navbar/navbar.component";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {AuthService} from "../auth.service";
 import {NgForOf, NgIf} from "@angular/common";
 import {Router} from "@angular/router";
 import {PostResponse} from "../models/post.response";
+import {PostService} from "../services/post.service";
 
 @Component({
   selector: 'app-drafts',
@@ -22,7 +22,7 @@ export class DraftsComponent implements OnInit {
   currentUser: any;
 
   constructor(
-    private http: HttpClient,
+    private postService: PostService,
     private authService: AuthService,
     private router: Router,
     ) {
@@ -35,29 +35,20 @@ export class DraftsComponent implements OnInit {
 
   getDrafts(): void {
     const author = this.currentUser.username;
-    const headers = new HttpHeaders({
-      'Role': this.currentUser.role
+    this.postService.getDrafts(author).subscribe({
+      next: (data) => {
+        this.drafts = data;
+      },
+      error: (err) => {
+        console.error('Error fetching drafts:', err);
+      }
     });
-
-    this.http.post<PostResponse[]>('http://localhost:8081/api/post/drafts', { author }, { headers })
-      .subscribe({
-        next: (data) => {
-          this.drafts = data;
-        },
-        error: (err) => {
-          console.error('Error fetching drafts:', err);
-        }
-      });
   }
 
   sendIn(id: number): void {
-    const headers = new HttpHeaders({
-      'Role': this.currentUser.role
-    });
-
-    this.http.post('http://localhost:8081/api/post/sendInDraft', id, { headers }).subscribe({
+    this.postService.sendInDraft(id).subscribe({
       next: () => {
-        this.getDrafts()
+        this.getDrafts();
       },
       error: (error) => {
         console.error('Error sending in draft:', error);

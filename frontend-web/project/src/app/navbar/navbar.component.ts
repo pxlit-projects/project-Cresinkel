@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 import {NgForOf, NgIf} from "@angular/common";
-import {PostResponse} from "../models/post.response";
 import {Notification} from "../models/notification";
-import {HttpClient} from "@angular/common/http";
+import {PostService} from "../services/post.service";
 
 @Component({
   selector: 'app-navbar',
@@ -21,7 +20,7 @@ export class NavbarComponent implements OnInit {
   notifications: Notification[] = [];
 
   constructor(
-    private http: HttpClient,
+    private postService: PostService,
     public authService: AuthService,
     private router: Router
   ) {
@@ -33,28 +32,25 @@ export class NavbarComponent implements OnInit {
   }
 
   getNotifications(): void {
-    const author = this.currentUser.username;
-    this.http.get<Notification[]>(`http://localhost:8081/api/notifications?author=${author}`)
-      .subscribe({
-        next: (data) => {
-          this.notifications = data;
-        },
-        error: (err) => {
-          console.error('Error getting notifications:', err);
-        }
-      });
+    this.postService.getNotifications().subscribe({
+      next: (data) => {
+        this.notifications = data;
+      },
+      error: (err) => {
+        console.error('Error getting notifications:', err);
+      }
+    });
   }
 
   deleteNotification(notificationId: number): void {
-    this.http.delete(`http://localhost:8081/api/notifications/${notificationId}`)
-      .subscribe({
-        next: () => {
-          this.getNotifications();
-        },
-        error: (err) => {
-          console.error('Error deleting notification:', err);
-        }
-      });
+    this.postService.deleteNotification(notificationId).subscribe({
+      next: () => {
+        this.getNotifications();
+      },
+      error: (err) => {
+        console.error('Error deleting notification:', err);
+      }
+    });
   }
 
   logout() {

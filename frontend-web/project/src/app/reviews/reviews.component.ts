@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {NavbarComponent} from "../navbar/navbar.component";
 import {CommonModule, DatePipe, NgForOf, NgIf} from "@angular/common";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {AuthService} from "../auth.service";
 import {Router} from "@angular/router";
 import {FormsModule} from "@angular/forms";
@@ -40,8 +40,14 @@ export class ReviewsComponent implements OnInit {
     this.getReviews();
   }
 
+  private getHttpHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Role': this.currentUser.role
+    });
+  }
+
   getReviews(): void {
-    this.http.get<ReviewResponse[]>('http://localhost:8082/api/review')
+    this.http.get<ReviewResponse[]>('http://localhost:8082/api/review', { headers: this.getHttpHeaders() })
       .subscribe({
         next: (data) => {
           this.reviews = data.map(review => ({
@@ -71,8 +77,11 @@ export class ReviewsComponent implements OnInit {
       rejectionReason: this.rejectionReason
     };
 
-    this.http.put<ReviewResponse>(`http://localhost:8082/api/review/${postId}`, requestBody)
-      .subscribe({
+    this.http.put<ReviewResponse>(
+      `http://localhost:8082/api/review/${postId}`,
+      requestBody,
+      { headers: this.getHttpHeaders() }
+    ).subscribe({
         next: (data) => {
           this.getReviews();
         },

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -20,7 +21,10 @@ public class CommentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createPost(@RequestBody CommentRequest commentRequest) {
+    public void createPost(@RequestBody CommentRequest commentRequest,
+                           @RequestHeader("Role") String roleHeader) {
+        validateRole(roleHeader);
+
         commentService.createComment(commentRequest);
     }
 
@@ -30,12 +34,26 @@ public class CommentController {
     }
 
     @PutMapping("/{author}")
-    public void updateReviewStatus(@PathVariable String author, @RequestBody UpdateCommentRequest updateCommentRequest) {
+    public void updateReviewStatus(@PathVariable String author,
+                                   @RequestBody UpdateCommentRequest updateCommentRequest,
+                                   @RequestHeader("Role") String roleHeader) {
+        validateRole(roleHeader);
+
         commentService.updateComment(updateCommentRequest, author);
     }
 
     @DeleteMapping("/{commentId}/{author}")
-    public void deleteNotification(@PathVariable Long commentId, @PathVariable String author) {
+    public void deleteNotification(@PathVariable Long commentId,
+                                   @PathVariable String author,
+                                   @RequestHeader("Role") String roleHeader) {
+        validateRole(roleHeader);
+
         commentService.deleteComment(commentId, author);
+    }
+
+    private void validateRole(String roleHeader) {
+        if (!"gebruiker".equalsIgnoreCase(roleHeader) && !"redacteur".equalsIgnoreCase(roleHeader)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have the required role to access this resource.");
+        }
     }
 }

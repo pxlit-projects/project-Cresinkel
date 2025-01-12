@@ -4,7 +4,7 @@ import {NavbarComponent} from "../navbar/navbar.component";
 import {PostResponse} from "../models/post.response";
 import {AuthService} from "../auth.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 
 @Component({
   selector: 'app-edit-draft',
@@ -20,13 +20,16 @@ export class EditDraftComponent implements OnInit {
   title: string = '';
   description: string = '';
   id: number = 0;
+  currentUser: any;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
     private http: HttpClient
-  ) {}
+  ) {
+    this.currentUser = this.authService.currentUserValue;
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -36,7 +39,11 @@ export class EditDraftComponent implements OnInit {
   }
 
   getDraft(id: number): void {
-    this.http.post<PostResponse>('http://localhost:8081/api/post/draft', { id })
+    const headers = new HttpHeaders({
+      'Role': this.currentUser.role
+    });
+
+    this.http.post<PostResponse>('http://localhost:8081/api/post/draft', { id }, { headers })
       .subscribe({
         next: (data) => {
           this.title = data.title;
@@ -55,7 +62,11 @@ export class EditDraftComponent implements OnInit {
       description: this.description
     };
 
-    this.http.post('http://localhost:8081/api/post/editDraft', postData).subscribe({
+    const headers = new HttpHeaders({
+      'Role': this.currentUser.role
+    });
+
+    this.http.post('http://localhost:8081/api/post/editDraft', postData, { headers }).subscribe({
       next: () => {
         this.router.navigate(['/drafts']);
       },

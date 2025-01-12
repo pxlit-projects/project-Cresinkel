@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NavbarComponent} from "../navbar/navbar.component";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {AuthService} from "../auth.service";
 import {NgForOf, NgIf} from "@angular/common";
 import {Router} from "@angular/router";
@@ -35,8 +35,11 @@ export class DraftsComponent implements OnInit {
 
   getDrafts(): void {
     const author = this.currentUser.username;
+    const headers = new HttpHeaders({
+      'Role': this.currentUser.role
+    });
 
-    this.http.post<PostResponse[]>('http://localhost:8081/api/post/drafts', { author })
+    this.http.post<PostResponse[]>('http://localhost:8081/api/post/drafts', { author }, { headers })
       .subscribe({
         next: (data) => {
           this.drafts = data;
@@ -48,7 +51,11 @@ export class DraftsComponent implements OnInit {
   }
 
   sendIn(id: number): void {
-    this.http.post('http://localhost:8081/api/post/sendInDraft', id).subscribe({
+    const headers = new HttpHeaders({
+      'Role': this.currentUser.role
+    });
+
+    this.http.post('http://localhost:8081/api/post/sendInDraft', id, { headers }).subscribe({
       next: () => {
         this.getDrafts()
       },

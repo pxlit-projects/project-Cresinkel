@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {NavbarComponent} from "../navbar/navbar.component";
 import {CommonModule, DatePipe, NgForOf, NgIf} from "@angular/common";
 import {PostResponse} from "../models/post.response";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {AuthService} from "../auth.service";
 import {Router} from "@angular/router";
 import {FormsModule} from "@angular/forms";
@@ -47,6 +47,12 @@ export class PostsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getPosts();
+  }
+
+  private getHttpHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Role': this.currentUser.role
+    });
   }
 
   getPosts(): void {
@@ -94,7 +100,7 @@ export class PostsComponent implements OnInit {
         description: comment,
         author: this.currentUser.username,
         postId: postId
-      })
+      }, { headers: this.getHttpHeaders() })
         .subscribe({
           next: () => {
             if (!this.comments[postId]) {
@@ -125,7 +131,7 @@ export class PostsComponent implements OnInit {
       this.http.put(`http://localhost:8083/api/comment/${this.currentUser.username}`, {
         description: updatedDescription,
         commentId: commentId
-      })
+      }, { headers: this.getHttpHeaders() })
         .subscribe({
           next: () => {
             const comment = this.comments[postId].find(c => c.commentId === commentId);
@@ -142,7 +148,7 @@ export class PostsComponent implements OnInit {
   }
 
   deleteComment(commentId: number, postId: number): void {
-    this.http.delete(`http://localhost:8083/api/comment/${commentId}/${this.currentUser.username}`)
+    this.http.delete(`http://localhost:8083/api/comment/${commentId}/${this.currentUser.username}`, { headers: this.getHttpHeaders() })
       .subscribe({
         next: () => {
           this.getCommentsForPost(postId);

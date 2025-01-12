@@ -3,7 +3,7 @@ import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from "@angular/forms";
 import { NavbarComponent } from "../navbar/navbar.component";
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-create-post',
@@ -40,7 +40,11 @@ export class CreatePostComponent {
       isDraft: isDraft
     };
 
-    this.http.post('http://localhost:8081/api/post', postData).subscribe({
+    const headers = new HttpHeaders({
+      'Role': currentUser.role
+    });
+
+    this.http.post('http://localhost:8081/api/post', postData, { headers }).subscribe({
       next: () => {
         if (isDraft) {
           this.router.navigate(['/drafts']);

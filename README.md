@@ -1,7 +1,6 @@
 # Fullstack Java Project
 
-## Firstname Lastname (Class)
-Change the name and Class in the title above
+## Wouter Cressato (3AONC)
 
 ## Folder structure
 
@@ -17,4 +16,19 @@ Each folder contains its own specific `.gitignore` file.
 
 ## How to setup and run this application
 
-:heavy_check_mark:_(COMMENT) Add setup instructions and provide some direction to run the whole  application: frontend to backend._
+### Frontend
+In frontend/project/ run commands:
+* npm run build
+* docker build -t NAME
+* docker run -d -p PORT:80 NAME
+
+### Backend
+Run XAMPP to start database (or another way to start your mysql)
+Run "docker compose up" in backend/project/ to start RabbitMQ
+Run the 6 applications in this order:
+* Configuration Service
+* Discovery Service
+* Gateway Service
+* Review Service
+* Comment Service
+* Post Service
